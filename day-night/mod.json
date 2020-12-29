@@ -1,0 +1,12 @@
+{
+    "Name": "DayNight",
+    "Description": "Changes level's lightning during the battle",
+    "Authors": ["DarkThanos", "GreatApo", "Reirei"],
+    "Tags": ["day-night"],
+    "Version": "0.1",
+    "HasVeniceEXT": true,
+    "HasWebUI": true,
+    "Dependencies": {
+        "veniceext": "^1.0.0"
+    }
+}

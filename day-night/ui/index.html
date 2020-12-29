@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		body, html {
+			padding: 0;
+			margin: 0;
+			width: 100%;
+			height: 100%;
+			background: transparent;
+			overflow: hidden;
+		}
+
+		#day-night-indicator {
+			position: absolute;
+			top: 5px;
+			left: 5px;
+			background-color: #0e61b78a;
+			padding: 2px 4px 2px 4px;
+			opacity: 0.8;
+		}
+		
+		#light {
+			width: 20px;
+			height: 20px;
+			background-image: url('img/light.png');
+			background-size: 100% 100%;
+			display: inline-block;
+			vertical-align: top;
+		}
+		
+		#dark {
+			width: 20px;
+			height: 20px;
+			background-image: url('img/dark.png');
+			background-size: 100% 100%;
+			display: inline-block;
+			vertical-align: top;
+		}
+		
+		#bar {
+			width: 100px;
+			height: 10px;
+			border: 1px solid #fff;
+			border-radius: 10px;
+			position: relative;
+			display: inline-block;
+			margin: 5px 0;
+			vertical-align: top;
+		}
+		
+		#pointer {
+			position: absolute;
+			top: 0;
+			left: 50%;
+			height: 20px;
+			border-right: 2px solid #fff;
+			margin-left: -1px;
+			margin-top: -5px;
+		}
+
+		#daytime {
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 0.8em;
+			color: #fff;
+			text-align: center;
+			line-height: 22px;
+			display: inline-block;
+			vertical-align: top;
+		}
+		
+	</style>
+</head>
+<body>
+	<div id="day-night-indicator">
+		<div id="light"></div>
+		<div id="bar">
+			<div id="pointer"></div>
+		</div>
+		<div id="dark"></div>
+		<div id="daytime">0d 3h</div>
+	</div>
+
+	<script type="application/javascript">
+		const time = document.getElementById('daytime');
+		const pointer = document.getElementById('pointer');
+
+		window.showUI = () => {
+			document.body.style.display = 'block';
+		};
+
+		window.hideUI = () => {
+			document.body.style.display = 'none';
+		};
+		
+		// SUN ----- ----- MOON
+		// 12      6/18		24
+		window.update = (days, hours) => {
+			let ratio = Math.abs(hours - 12) / 12;
+			time.innerHTML = Math.round(days) + 'd ' + Math.round(hours) + 'h';
+			pointer.style.left = (ratio * 100) + '%';
+		};
+	</script>
+</body>
+</html>
