@@ -1,12 +1,13 @@
 -- Code from https://github.com/kapraran/vu-compass by kapraran
 -- Modified by GreatApo
 isHud = false
+isKilled = false
 
 Hooks:Install('UI:PushScreen', 999, function(hook, screen, graphPriority, parentGraph)
 	local screen = UIGraphAsset(screen)
 
 	-- only for debug
-	-- print(screen.name)
+	print(screen.name)
 	-- if screen.name == 'UI/Flow/Screen/PreRoundWaitingScreen' then
 	--   hook:Return(nil)
 	--   return
@@ -20,5 +21,9 @@ Hooks:Install('UI:PushScreen', 999, function(hook, screen, graphPriority, parent
 	if screen.name == 'UI/Flow/Screen/HudMPScreen' then
 		WebUI:ExecuteJS('window.showUI();')
 		isHud = true
+	end
+	
+	if screen.name == 'UI/Flow/Screen/KillScreen' then
+		isKilled = true
 	end
 end)

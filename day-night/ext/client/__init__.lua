@@ -393,8 +393,12 @@ Events:Subscribe('UI:DrawHud', function()
 	-- get player
 	local player = PlayerManager:GetLocalPlayer()
 	if player == nil or player.soldier == nil then
-		WebUI:ExecuteJS('window.hideUI();')
-		return
+		if isKilled then
+			WebUI:ExecuteJS('window.hideUI();')
+			return
+		end
+	else
+		isKilled = false
 	end
 
 	if (isHud and true) then
