@@ -3,7 +3,7 @@
     "Description": "Changes level's lightning during the battle",
     "Authors": ["DarkThanos", "GreatApo", "Reirei"],
     "Tags": ["day-night"],
-    "Version": "0.1",
+    "Version": "0.2",
     "HasVeniceEXT": true,
     "HasWebUI": true,
     "Dependencies": {

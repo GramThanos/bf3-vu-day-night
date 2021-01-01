@@ -79,11 +79,11 @@ profiles.day.skyBoxBackLightColor = nil
 profiles.day.skyBoxGroundColor = nil
 profiles.day.terrainColor = nil
 profiles.day.skyBoxSunLightColor = nil
-profiles.night.bounceScale = nil
-profiles.night.cullDistance = nil
-profiles.night.esunScale = nil
-profiles.night.skyBoxSunLightColorSize = nil
-profiles.night.skyBoxBackLightColorSize = nil
+profiles.day.bounceScale = nil
+profiles.day.cullDistance = nil
+profiles.day.esunScale = nil
+profiles.day.skyBoxSunLightColorSize = nil
+profiles.day.skyBoxBackLightColorSize = nil
 
 local cache_states = {}
 
@@ -115,6 +115,9 @@ local function updateDayNight()
             state.outdoorLight.skyColor = vfVal(cache_states[_].outdoorLight.skyColor, profiles.night.skyColor, factor)
             state.outdoorLight.groundColor = vfVal(cache_states[_].outdoorLight.groundColor, profiles.night.groundColor, factor)
             state.outdoorLight.skyEnvmapShadowScale = fVal(cache_states[_].outdoorLight.skyEnvmapShadowScale, profiles.night.skyEnvmapShadowScale, factor)
+
+            --state.outdoorLight.sunRotationY = state.outdoorLight.sunRotationY + 10
+            --state.outdoorLight.sunRotationX = state.outdoorLight.sunRotationX + 10
         end
         if state.sky ~= nil then
             if not cache_states[_].sky then
@@ -186,7 +189,18 @@ local function updateDayNight()
             --state.enlighten.skyBoxSunLightColorSize = fVal(profiles.day.skyBoxSunLightColorSize, profiles.night.skyBoxSunLightColorSize, factor)
             --state.enlighten.skyBoxBackLightColorSize = fVal(profiles.day.skyBoxBackLightColorSize, profiles.night.skyBoxBackLightColorSize, factor)
         end
+
+        -- Sun flare should be enabled on day only
+        --if state.sunFlare ~= nil then
+        --    if factor < 0.5 then
+        --        state.sunFlare.enable = true
+        --    else
+        --        state.sunFlare.enable = false
+        --    end
+        --end
     end
+
+
 end
 
 -- Initialize default values
@@ -194,7 +208,7 @@ Events:Subscribe('Partition:Loaded', function(partition)
     for _, instance in pairs(partition.instances) do
         -- Init OutdoorLight values
         if instance:Is('OutdoorLightComponentData') then
-            print('OutdoorLightComponentData')
+            --print('OutdoorLightComponentData')
             local outdoor = OutdoorLightComponentData(instance)
             outdoor:MakeWritable()
 
@@ -205,7 +219,7 @@ Events:Subscribe('Partition:Loaded', function(partition)
         end
         -- Init Sky values
         if instance:Is('SkyComponentData') then
-            print('SkyComponentData')
+            --print('SkyComponentData')
             sky = SkyComponentData(instance)
             sky:MakeWritable()
 
@@ -235,7 +249,7 @@ Events:Subscribe('Partition:Loaded', function(partition)
         end
         -- Init Fog values
         if instance:Is('FogComponentData') then
-            print('FogComponentData')
+            --print('FogComponentData')
             local fog = FogComponentData(instance)
             fog:MakeWritable()
 
@@ -243,7 +257,7 @@ Events:Subscribe('Partition:Loaded', function(partition)
         end
         -- Init Tonemap values
         if instance:Is('TonemapComponentData') then
-            print('TonemapComponentData')
+            --print('TonemapComponentData')
             local tonemap = TonemapComponentData(instance)
             tonemap:MakeWritable()
 
@@ -270,7 +284,7 @@ Events:Subscribe('Partition:Loaded', function(partition)
         --end
         -- Init Enlighten values
         if instance:Is('EnlightenComponentData') then
-            print('EnlightenComponentData')
+            --print('EnlightenComponentData')
             local enlighten = EnlightenComponentData(instance)
             enlighten:MakeWritable()
 
@@ -284,6 +298,7 @@ Events:Subscribe('Partition:Loaded', function(partition)
             profiles.day.esunScale = enlighten.sunScale
             profiles.day.skyBoxSunLightColorSize = enlighten.skyBoxSunLightColorSize
             profiles.day.skyBoxBackLightColorSize = enlighten.skyBoxBackLightColorSize
+            
             --enlighten.enable = false
         end
         -- Init SunFlare values
@@ -332,15 +347,19 @@ Events:Subscribe('Engine:Update', function(dt)
     local second_passed = engine_update_timer
     engine_update_timer = 0.0
 
+    -- Update hours & days
     hours = hours + (daytime_hour_change_per_second * second_passed)
     if hours >= 24 then
         days = days + 1
         hours = hours % 24
     end
 
+    -- Update environment lighting
     updateDayNight()
+    -- Update UI indicators
     WebUI:ExecuteJS('window.update(' .. tostring(days) .. ', ' .. tostring(hours) .. ');')
 
+    -- Print Debug info
     if print_ticks_daytime_info == true then
         local factor = math.abs(hours % 24 - 12)/12
         print('Datetime : ' .. tostring(days) .. ' days ' .. tostring(hours) .. ' hours' .. ' -> ' .. tostring(factor))
@@ -349,8 +368,11 @@ end)
 
 -- Listen to sync from server
 NetEvents:Subscribe(NetMessage.S2C_SYNC_DAYTIME, function(serverHours)
+    -- Update hours and days from server
     days = (serverHours - (serverHours % 24)) / 24
     hours = serverHours % 24
+
+    -- Print Debug info
     if print_ticks_daytime_info == true then
         local factor = math.abs(hours % 24 - 12)/12
         print('Server Datetime Sync : ' .. tostring(days) .. ' days ' .. tostring(hours) .. ' hours' .. ' -> ' .. tostring(factor))
@@ -360,4 +382,13 @@ end)
 -- Load UI
 Events:Subscribe('Extension:Loaded', function()
     WebUI:Init()
+    WebUI:ExecuteJS('window.settings({days: ' .. tostring(show_days) .. ', period: ' .. tostring(show_day_period) .. ');')
+end)
+
+Events:Subscribe('Player:Respawn', function(player)
+    WebUI:ExecuteJS('window.showUI();')
+end)
+
+Events:Subscribe('Player:Killed', function(player)
+    WebUI:ExecuteJS('window.hideUI());')
 end)

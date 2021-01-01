@@ -11,13 +11,25 @@
 			overflow: hidden;
 		}
 
+		.bf3-blue-block {
+			background-color: #0e61b78a;
+			border-radius: 3px;
+			opacity: 0.8;
+			box-shadow: 0 0 4px 1px #0e61b78a;
+		}
+
 		#day-night-indicator {
 			position: absolute;
 			top: 5px;
 			left: 5px;
-			background-color: #0e61b78a;
-			padding: 2px 4px 2px 4px;
-			opacity: 0.8;
+			padding: 2px 4px;
+		}
+
+		#day-night-info {
+			position: absolute;
+			top: 5px;
+			left: 174px;
+			padding: 2px 7px;
 		}
 		
 		#light {
@@ -47,20 +59,21 @@
 			display: inline-block;
 			margin: 5px 0;
 			vertical-align: top;
+			padding: 0 2px;
 		}
 		
 		#pointer {
-			position: absolute;
-			top: 0;
-			left: 50%;
-			height: 20px;
-			border-right: 2px solid #fff;
-			margin-left: -1px;
-			margin-top: -5px;
+			height: 6px;
+			width: 100%;
+			background-color: white;
+			border-radius: 3px;
+			margin-top: 2px;
 		}
 
 		#daytime {
-			font-family: Arial, Helvetica, sans-serif;
+			/*font-family: Arial, Helvetica, sans-serif;*/
+			font-family: Consolas;
+			font-style: italic;
 			font-size: 0.8em;
 			color: #fff;
 			text-align: center;
@@ -71,35 +84,71 @@
 		
 	</style>
 </head>
-<body>
-	<div id="day-night-indicator">
+<body style="display: none;">
+	<div id="day-night-indicator" class="bf3-blue-block">
 		<div id="light"></div>
 		<div id="bar">
 			<div id="pointer"></div>
 		</div>
 		<div id="dark"></div>
-		<div id="daytime">0d 3h</div>
+	</div>
+	<div id="day-night-info" class="bf3-blue-block">
+		<div id="daytime"></div>
 	</div>
 
 	<script type="application/javascript">
+		// Get Elements
 		const time = document.getElementById('daytime');
 		const pointer = document.getElementById('pointer');
+		// Settings Variables
+		var showDays = true;
+		var showPeriod = true;
 
+		// Show/Hide UI functions
 		window.showUI = () => {
 			document.body.style.display = 'block';
 		};
-
 		window.hideUI = () => {
 			document.body.style.display = 'none';
 		};
+
+		// Set settings
+		window.settings = (settings) => {
+			showDays = (settings.days) ? true : false;
+			showPeriod = (settings.period) ? true : false;
+		}
 		
+		// Update Interface
 		// SUN ----- ----- MOON
 		// 12      6/18		24
 		window.update = (days, hours) => {
-			let ratio = Math.abs(hours - 12) / 12;
-			time.innerHTML = Math.round(days) + 'd ' + Math.round(hours) + 'h';
-			pointer.style.left = (ratio * 100) + '%';
+			// Update Info
+			time.innerHTML = '' +
+				(showDays ? 'Day ' + Math.round(days) + ', ' : '') +
+				getTime(hours) + ' ' +
+				(showPeriod ? ' - ' + getPeriodName(hours) : '');
+			// Update Bar
+			let ratio = Math.round((Math.abs(hours - 12) / 12) * 100);
+			pointer.style.width = (ratio < 6 ? 6 : ratio) + '%';
 		};
+
+		window.getPeriodName = (hours) => {
+			hours = Math.round(hours);
+			if (hours <= 2) return 'Night';
+			if (hours <= 5) return 'Dawn';
+			if (hours <= 11) return 'Morning';
+			if (hours <= 13) return 'Noon';
+			if (hours <= 17) return 'Afternoon';
+			if (hours <= 21) return 'Evening';
+			else return 'Night';
+		}
+
+		window.getTime = (hours) => {
+			hours = Math.round(hours);
+			if (hours <= 12) return  hours + 'am'
+			else return  (hours - 12) + 'pm'
+		}
+
 	</script>
 </body>
 </html>

@@ -5,7 +5,7 @@ local server_started = os.clock()
 
 local function updateHours()
     -- Server tracks only hours
-    hours = (os.clock() - server_started) * daytime_hour_change_per_second
+    hours = ((os.clock() - server_started) * daytime_hour_change_per_second) + (days * 24)
 end
 
 local function broadcastHours()
@@ -22,12 +22,26 @@ Events:Subscribe('Engine:Update', function(dt)
     end
     engine_update_timer = engine_update_timer % server_update_daytime
 
+    -- Update hours & days
     updateHours()
+    -- Sync players
     broadcastHours()
 
+    -- Print Debug info
     if print_ticks_daytime_info == true then
         local d = (hours - (hours % 24)) / 24
         local h = hours % 24
         print('Datetime : ' .. tostring(d) .. ' days ' .. tostring(h) .. ' hours')
+    end
+end)
+
+
+Events:Subscribe('Level:Loaded', function(levelName, gameMode, round, roundsPerMap)
+    if reset_days_hours_for_each_level == true then
+        days = 1
+        hours = start_hour
+        if randomize_start_hour == true then
+            hours = math.random(0, 23)
+        end
     end
 end)
