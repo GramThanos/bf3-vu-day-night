@@ -4,9 +4,9 @@
 -- How many minutes should a day last
 -- Example Values:
 -- 		full day night circle in 20 minutes 					: 20
--- 		full day night circle in 10 minutes (suggested value) 	: 15
+-- 		full day night circle in 15 minutes (suggested value) 	: 15
 -- 		full day night circle in 10 minutes 					: 10
--- 		1 hour per second (good for developers) 				: 24/60
+-- 		1 hour per second (good for debugging) 					: 24/60
 day_duration_in_minutes = 15
 
 -- How often, in seconds, should client update the environment (applying the new time lighting)
