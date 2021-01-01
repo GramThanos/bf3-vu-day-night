@@ -4,5 +4,5 @@ This is a server mod for [VU](https://veniceunleashed.net/) — a community-orie
 ## Preview
 ![preview-day](preview.png)
 
-# Download/Installation
+## Download/Installation
 Get the latest release and instructions [here](https://github.com/GramThanos/bf3-vu-day-night/releases/latest).
