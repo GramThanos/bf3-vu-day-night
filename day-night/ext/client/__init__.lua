@@ -1,5 +1,6 @@
 require('__shared/ticks')
 require('__shared/net')
+require('ui')
 
 -- DayNight profiles
 local profiles = {}
@@ -385,10 +386,20 @@ Events:Subscribe('Extension:Loaded', function()
     WebUI:ExecuteJS('window.settings({days: ' .. tostring(show_days) .. ', period: ' .. tostring(show_day_period) .. ');')
 end)
 
-Events:Subscribe('Player:Respawn', function(player)
-    WebUI:ExecuteJS('window.showUI();')
-end)
+-- Enable/disable UI
+-- WebUI:ExecuteJS('window.showUI();')
+-- WebUI:ExecuteJS('window.hideUI());')
+Events:Subscribe('UI:DrawHud', function()
+	-- get player
+	local player = PlayerManager:GetLocalPlayer()
+	if player == nil or player.soldier == nil then
+		WebUI:ExecuteJS('window.hideUI();')
+		return
+	end
 
-Events:Subscribe('Player:Killed', function(player)
-    WebUI:ExecuteJS('window.hideUI());')
+	if (isHud and true) then
+		WebUI:ExecuteJS('window.showUI();')
+	else
+		WebUI:ExecuteJS('window.hideUI();')
+	end
 end)
