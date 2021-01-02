@@ -10,7 +10,7 @@ This is a server mod for [VU](https://veniceunleashed.net/) — a community-orie
 
 1. Download the latest zip [vu-mod-day-night-v0.2.zip](https://github.com/GramThanos/bf3-vu-day-night/releases/download/v0.2/vu-mod-day-night-v0.2.zip)
 2. Extract the zip into your server's `\Server\Admin\Mods` folder
-3. Enable the mod by writing day-night in your ModList.txt as a new row
+3. Enable the mod by writing `day-night` in your `ModList.txt` as a new row
 4. (Optional) Edit mod options at the `\Server\Admin\Mods\day-night\ext\shared\ticks.lua` file
 5. Launch server
 
@@ -28,5 +28,6 @@ You may change the mod's settings by editing the `ext\shared\ticks.lua` file. Av
 
 ## About
 The mod was developed by [GramThanos](https://github.com/GramThanos) & [GreatApo](https://github.com/GreatApo).
+Credits to [Reirei](https://github.com/rierei/night-time) and [kapraran](https://github.com/kapraran/vu-compass) since code snippets from their work are used.
 
 Leave us a comment if you like at [Venice Unleashed Forum](https://community.veniceunleashed.net/t/day-night-live-change-levels-lighting-during-the-game/1776/4).
