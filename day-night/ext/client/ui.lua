@@ -7,7 +7,7 @@ Hooks:Install('UI:PushScreen', 999, function(hook, screen, graphPriority, parent
 	local screen = UIGraphAsset(screen)
 
 	-- only for debug
-	print(screen.name)
+	-- print(screen.name)
 	-- if screen.name == 'UI/Flow/Screen/PreRoundWaitingScreen' then
 	--   hook:Return(nil)
 	--   return
