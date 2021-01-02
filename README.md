@@ -28,3 +28,4 @@ You may change the mod's settings by editing the `ext\shared\ticks.lua` file. Av
 
 ## About
 The mod was developed by [GramThanos](https://github.com/GramThanos) & [GreatApo](https://github.com/GreatApo)
+Leave us a comment if you like at [Venice Unleashed Forum](https://community.veniceunleashed.net/t/day-night-live-change-levels-lighting-during-the-game/1776/4).
