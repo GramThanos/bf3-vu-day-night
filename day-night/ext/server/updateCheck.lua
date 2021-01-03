@@ -3,7 +3,7 @@
 
 
 -- Add current mod version
-local localModVersion = "0.2" --temp fix, waiting for API to get version from mod.json
+local localModVersion = "0.3" --temp fix, waiting for API to get version from mod.json
 
 -- Project URL
 local projectURL = "https://github.com/GramThanos/bf3-vu-day-night/"
@@ -15,18 +15,18 @@ local checkURL = "https://api.github.com/repos/GramThanos/bf3-vu-day-night/relea
 -- GitHub link to mod.json: https://raw.githubusercontent.com/GramThanos/bf3-vu-day-night/main/day-night/mod.json
 -- GitHub link to last release: https://api.github.com/repos/GramThanos/bf3-vu-day-night/releases/latest (release tag name should be formated as VERSION_NUMBER or vVERSION_NUMBER, eg. 0.2 or v0.2)
 
--- Show up-to-date message 
+-- Show up-to-date message
 local showUptodateMsg = true
 
 -- Check last version code
 function getCurrentVersion()
-    options = HttpOptions({}, 10);
-    options.verifyCertificate = false; --ignore cert for wine users
-    res = Net:GetHTTP(checkURL, options);
-    if res.status ~= 200 then
-        return nil;
-    end
-    json = json.decode(res.body);
+	options = HttpOptions({}, 10);
+	options.verifyCertificate = false; --ignore cert for wine users
+	res = Net:GetHTTP(checkURL, options);
+	if res.status ~= 200 then
+		return nil;
+	end
+	json = json.decode(res.body);
 	
 	if json.Version ~= nil then
 		return json.Version;
