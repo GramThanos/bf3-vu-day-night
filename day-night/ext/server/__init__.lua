@@ -1,5 +1,6 @@
 require('__shared/ticks')
 require('__shared/net')
+require('updateCheck')
 
 local server_started = os.clock()
 
