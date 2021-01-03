@@ -1,4 +1,4 @@
-[![latest release](https://img.shields.io/badge/latest%20release-v0.2-green.svg)](https://github.com/GramThanos/bf3-vu-day-night/releases/latest)
+[![latest release](https://img.shields.io/badge/latest%20release-v0.3-green.svg)](https://github.com/GramThanos/bf3-vu-day-night/releases/latest)
 [![downloads](https://img.shields.io/github/downloads/gramthanos/bf3-vu-day-night/total.svg)](https://github.com/GramThanos/bf3-vu-day-night/releases)
 
 # Day & Night - Live change levels lighting during the game
