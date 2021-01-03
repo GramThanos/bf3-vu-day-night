@@ -8,7 +8,7 @@ This is a server mod for [VU](https://veniceunleashed.net/) — a community-orie
 
 ## Download/Installation
 
-1. Download the latest zip [vu-mod-day-night-v0.2.zip](https://github.com/GramThanos/bf3-vu-day-night/releases/download/v0.2/vu-mod-day-night-v0.2.zip)
+1. Download the latest zip [vu-mod-day-night-v0.3.zip](https://github.com/GramThanos/bf3-vu-day-night/releases/download/v0.3/vu-mod-day-night-v0.3.zip)
 2. Extract the zip into your server's `\Server\Admin\Mods` folder
 3. Enable the mod by writing `day-night` in your `ModList.txt` as a new row
 4. (Optional) Edit mod options at the `\Server\Admin\Mods\day-night\ext\shared\ticks.lua` file
