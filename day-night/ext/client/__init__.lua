@@ -98,6 +98,7 @@ local function vfVal(a, b, f)
 end
 local function updateDayNight()
     local factor = math.abs(hours % 24 - 12)/12
+	factor =  math.max(0, 1 - (1-factor+0.3)^8) -- night_factor (non linear variation)
 
     local states = VisualEnvironmentManager:GetStates()
     for _, state in pairs(states) do
@@ -201,7 +202,8 @@ local function updateDayNight()
         --end
     end
 
-
+	-- Apply VE changes
+	VisualEnvironmentManager:SetDirty(true)
 end
 
 -- Initialize default values

@@ -4,7 +4,7 @@
     "Authors": ["DarkThanos", "GreatApo"],
     "Credits": ["Reirei", "kapraran"],
     "Tags": ["day-night"],
-    "Version": "0.3",
+    "Version": "0.4",
     "HasVeniceEXT": true,
     "HasWebUI": true,
     "Dependencies": {

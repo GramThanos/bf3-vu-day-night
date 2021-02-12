@@ -3,7 +3,7 @@
 
 
 -- Add current mod version
-local localModVersion = "0.3" --temp fix, waiting for API to get version from mod.json
+local localModVersion = "0.4" --temp fix, waiting for API to get version from mod.json
 
 -- Project URL
 local projectURL = "https://github.com/GramThanos/bf3-vu-day-night/"
