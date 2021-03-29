@@ -1,25 +1,13 @@
 local nightPreset = nil
-local shaderParams = nil
-local outdoorLight = nil
-local sky = nil
-local fog = nil
-local tonemap = nil
-local cc = nil
-local enlighten = nil
-local sunFlare = nil
 
 -- Based on Code by Orfeas Zafeiris
 -- expanded by IllustrisJack
 
 function Night()
-
-	if nightPreset ~= nil then
-		return
-	end
 	
 	local nightData = VisualEnvironmentEntityData()
 	nightData.enabled = true
-	nightData.visibility = 1.0
+	nightData.visibility = night_darkness
 	nightData.priority = 999999
 
 	local outdoorLight = OutdoorLightComponentData()
@@ -36,49 +24,58 @@ function Night()
 	outdoorLight.cloudShadowCoverage = 0.44
 	outdoorLight.cloudShadowSpeed = Vec2(-15.000000, -15.000000)
 
-	outdoorLight.skyLightAngleFactor = 0.0089999996125698
+	outdoorLight.skyLightAngleFactor = 0.009
 	outdoorLight.sunSpecularScale = 0.25
 	outdoorLight.skyEnvmapShadowScale = 0.5
 	outdoorLight.sunShadowHeightScale = 0.3
 
-	outdoorLight.translucencyDistortion = 0.10000000149012
+	outdoorLight.translucencyDistortion = 0.10
 	outdoorLight.translucencyAmbient = 0
 	outdoorLight.translucencyScale = 1
 	outdoorLight.translucencyPower = 80.0
 
-	outdoorLight.sunRotationX = 255.48399353027
+	outdoorLight.sunRotationX = 255
 	outdoorLight.sunRotationY = 25
 
 	local sky = SkyComponentData()
-	sky.brightnessScale = 0.3
+	sky.brightnessScale = 0.01
 	sky.enable = true
-	sky.sunSize = 0.013
-	sky.sunScale = 0.6
-	sky.panoramicTexture = TextureAsset(_G.MoonNightSkybox)
-	sky.panoramicAlphaTexture = TextureAsset(_G.MoonNightAlpha)
-	sky.staticEnvmapTexture = TextureAsset(_G.MoonNightEnvmap)
-	sky.skyGradientTexture = TextureAsset(_G.MoonNightGradient)
+	if hide_sun then
+		sky.sunSize = 0.0
+		sky.sunScale = 0.0
+	else
+		sky.sunSize = 0.013
+		sky.sunScale = 0.6
+	end
+	sky.panoramicTexture = nil -- TextureAsset(_G.MoonNightSkybox)
+	sky.panoramicAlphaTexture = nil -- extureAsset(_G.MoonNightAlpha)
+	sky.staticEnvmapTexture = nil -- TextureAsset(_G.MoonNightEnvmap)
+
+	if m_SkyGradientTexture ~= nil then
+		sky.skyGradientTexture = TextureAsset(m_SkyGradientTexture) --TextureAsset(_G.MoonNightGradient)
+		print("Sky Gradient Texture applied")
+	end
 	sky.realm = 2
-	sky.panoramicUVMinX = 0.280999988317
-	sky.panoramicUVMaxX = 0.298999994993
-	sky.panoramicUVMinY = 0.0630000010133
-	sky.panoramicUVMaxY = 0.307000011206
+	sky.panoramicUVMinX = 0.281
+	sky.panoramicUVMaxX = 0.299
+	sky.panoramicUVMinY = 0.063
+	sky.panoramicUVMaxY = 0.307
 	sky.panoramicTileFactor = 1.0
 	sky.panoramicRotation = 260
-	sky.staticEnvmapScale = 1
+	sky.staticEnvmapScale = 0
 	sky.skyVisibilityExponent = 0.2
 	sky.skyEnvmap8BitTexScale = 1
 	sky.customEnvmapScale = 1
 	sky.customEnvmapAmbient = 1
-	sky.cloudLayer1Texture = TextureAsset(_G.MoonNightStars)
-	sky.cloudLayer1Altitude = 2000000.0
-	sky.cloudLayer1TileFactor = 0.600000023842
-	sky.cloudLayer1Rotation = 237.072998047
-	sky.cloudLayer1Speed = -0.0010000000475
-	sky.cloudLayer1SunLightIntensity = 0.3
-	sky.cloudLayer1SunLightPower = 0.3
-	sky.cloudLayer1AmbientLightIntensity = 0.5
-	sky.cloudLayer1AlphaMul = 0.25
+	--sky.cloudLayer1Texture = nil -- TextureAsset(_G.MoonNightStars)
+	--sky.cloudLayer1Altitude = 2000000.0
+	--sky.cloudLayer1TileFactor = 0.600000023842
+	--sky.cloudLayer1Rotation = 237.072998047
+	--sky.cloudLayer1Speed = -0.0010000000475
+	--sky.cloudLayer1SunLightIntensity = 0.3
+	--sky.cloudLayer1SunLightPower = 0.3
+	--sky.cloudLayer1AmbientLightIntensity = 0.5
+	--sky.cloudLayer1AlphaMul = 0.25
 
 	local colorCorrection = ColorCorrectionComponentData()
 	colorCorrection.enable = true
@@ -96,13 +93,11 @@ function Night()
 	local fog = FogComponentData()
 	fog.enable = true
 	fog.realm = 0
-
 	fog.start = 25
 	fog.endValue = 800
 	fog.curve = Vec4(0.4, -0.77, 1.3, -0.01)
 	fog.fogDistanceMultiplier = 1.0
 	fog.fogGradientEnable = true
-
 	fog.fogColorEnable = true
 	--[[ -- bright Night
 	fog.fogColor = Vec3(0.08, 0.0615, 0.0157)
@@ -129,7 +124,7 @@ function Night()
 	enlighten.skyBoxEnable = false
 
 	local sunFlare = SunFlareComponentData()
-	sunFlare.enable = true
+	sunFlare.enable = false
 
 	local character = CharacterLightingComponentData()
 	character.characterLightEnable = true
@@ -165,16 +160,22 @@ function Night()
 
 	if nightPreset ~= nil then
 		nightPreset:Init(Realm.Realm_Client, true)
+		print('Night VE preset added')
 	end
 	
 end
 
 function removebNight()
+
 	if nightPreset ~= nil then
 		nightPreset:Destroy()
 		nightPreset = nil
-		print('removed VES Bright_Night')
-		return true
+
+		print('Night VE preset removed')
+	end
+
+	if m_SkyGradientTexture ~= nil then
+		m_SkyGradientTexture = nil
 	end
 end
 
@@ -187,31 +188,59 @@ function update_night_visibility(factor)
 		return
 	end
 	
-	--local night_factor = math.max(0, 1 - (1-factor+0.3)^8)
-	local night_factor = factor
-	
-	if (night_factor ~= previous_night_factor) then
-		--print( factor .. " -> N" .. night_factor)
-		--[[
-		print("*visibility is: " .. nightPreset.visibility)
-		nightPreset.visibility = night_factor
-		VisualEnvironmentManager:SetDirty(true)
-		]]--
+	-- Try to update VE only if the factor is different 
+	if (factor ~= previous_night_factor) then
 		
 		local states = VisualEnvironmentManager:GetStates()
+		
 		-- Update preset visibility
 		for _, state in pairs(states) do
+				
 			-- Check if night preset
 			if state.priority == 999999 then
-				--print("*visibility is: " .. state.visibility)
-				state.visibility = night_factor
+				state.visibility = factor * night_darkness
 				VisualEnvironmentManager:SetDirty(true)
-				--print("*visibility changed: " .. state.visibility)
+				--print('Preset found & visibility was change')
 			end
 		end
 		
-		previous_night_factor = night_factor
+		previous_night_factor = factor
 	end			
+end
+
+-- Hide Sun
+function applyPatches()
+
+	local states = VisualEnvironmentManager:GetStates()
+	
+	for _, state in pairs(states) do
+		
+		if hide_sun then
+			if state.sky ~= nil then
+				state.sky.sunScale = 0
+				state.sky.sunSize = 0
+				print('Sun off')
+			end
+			
+			if state.sunFlare ~= nil then
+				state.sunFlare.enable = false
+				print('Sunflares off')
+			end
+		end
+
+		if day_night_cycle_enabled then
+			if state.sky ~= nil then
+				state.sky.panoramicUVMinX = 0.280999988317
+				state.sky.panoramicUVMaxX = 0.298999994993
+				state.sky.panoramicUVMinY = 0.0630000010133
+				state.sky.panoramicUVMaxY = 0.307000011206
+				state.sky.panoramicTileFactor = 1.0
+				state.sky.panoramicRotation = 260
+				print('Sky scale patch applied')
+			end
+		end
+
+	end
 end
 
 -- Remove the VE state when the mod is unloading.

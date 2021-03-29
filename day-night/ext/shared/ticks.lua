@@ -1,18 +1,26 @@
 
 ---- YOU MAY EDIT THE PARAMETERS BELOW ----
 
+-- GENERAL SETTINGS
+day_night_cycle_enabled = true
+hide_sun = true
+night_darkness = 0.99 -- 0 is day, 1 is pitch black (1.0 is the default)
+show_UI_bar = true -- show day-nigh cycle bar (day-night cycle needs to be enabled)
+
+-- DAY-NIGHT CYCLE SETTINGS
+
 -- How many minutes should a day last
 -- Example Values:
 -- 		full day night circle in 20 minutes 					: 20
 -- 		full day night circle in 15 minutes (suggested value) 	: 15
 -- 		full day night circle in 10 minutes 					: 10
 -- 		1 hour per second (good for debugging) 					: 24/60
-day_night_cycle_duration_in_minutes = 1
+day_night_cycle_duration_in_minutes = 30
 
 -- Pure night duration in minutes
-pure_night_duration = 0.1
+pure_night_duration = 5
 -- Pure day duration in minutes
-pure_day_duration = 0.1
+pure_day_duration = 0
 
 
 -- How often, in seconds, should client update the environment (applying the new time lighting)
@@ -24,15 +32,13 @@ client_update_environment = 0.001
 server_update_daytime = 30
 
 -- The day time to start the server at (0 - 23)
-start_hour = 12
+start_hour = 0	-- For real time use this value os.time('%H')
 randomize_start_hour = false
 reset_days_hours_for_each_level = true
 
 -- Show days on indicator
 show_days = true
 show_day_period = true
-
-
 
 
 

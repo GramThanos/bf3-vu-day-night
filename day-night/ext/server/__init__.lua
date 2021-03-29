@@ -13,6 +13,10 @@ end
 
 -- Record Ticks
 Events:Subscribe('Engine:Update', function(dt)
+
+	if day_night_cycle_enabled == false then
+		return
+	end
     engine_update_timer = engine_update_timer + dt
     server_day_night_cycle_seconds = server_day_night_cycle_seconds + dt
     

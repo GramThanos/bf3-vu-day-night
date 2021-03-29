@@ -3,20 +3,28 @@ require('__shared/net')
 require('__shared/tools')
 require('ui')
 require('night_preset')
-require('interchangable')
 
 local client_day_night_cycle_seconds = 0
 
 -- Level was loaded
 Events:Subscribe('Level:Loaded', function()
-	-- level = SharedUtils:GetLevelName()
+	-- Find Skybox Gradient Texture
+	findSkyGradientTexture()
+	-- Apply VE patches
+	applyPatches()
+	-- Create Night preset
 	Night()
 end)
 
 -- Record Ticks
 local engine_update_timer = 0.0
 Events:Subscribe('Engine:Update', function(dt)
-    engine_update_timer = engine_update_timer + dt
+    
+	if day_night_cycle_enabled == false then
+		return
+	end
+
+	engine_update_timer = engine_update_timer + dt
 	client_day_night_cycle_seconds = client_day_night_cycle_seconds + dt
 	
 	-- Limit VE changes
@@ -64,7 +72,7 @@ Events:Subscribe('Engine:Update', function(dt)
 	
 	WebUI:ExecuteJS('window.update(' .. tostring(t_days) .. ', ' .. tostring(t_hours) .. ');')
 	t_hours = math.floor(t_hours)
-		
+	
     -- Update hours & days
     
 	if hours ~= t_hours or days ~= t_days then
@@ -78,7 +86,6 @@ Events:Subscribe('Engine:Update', function(dt)
 		end
     end
 	
-
 end)
 
 -- Listen to sync from server
@@ -96,17 +103,19 @@ end)
 
 -- Load UI
 Events:Subscribe('Extension:Loaded', function()
-    WebUI:Init()
-    WebUI:ExecuteJS('window.settings({days: ' .. tostring(show_days) .. ', period: ' .. tostring(show_day_period) .. ');')
+	if show_UI_bar and day_night_cycle_enabled then
+		WebUI:Init()
+		WebUI:ExecuteJS('window.settings({days: ' .. tostring(show_days) .. ', period: ' .. tostring(show_day_period) .. ');')
+	end
 end)
 
 -- Enable/disable UI
 -- WebUI:ExecuteJS('window.showUI();')
 -- WebUI:ExecuteJS('window.hideUI());')
 Events:Subscribe('UI:DrawHud', function()
-	-- get player
-	local player = PlayerManager:GetLocalPlayer()
-	if player == nil or player.soldier == nil then
+	-- Get player
+	local s_player = PlayerManager:GetLocalPlayer()
+	if s_player == nil or s_player.soldier == nil then
 		if isKilled then
 			WebUI:ExecuteJS('window.hideUI();')
 			return
@@ -115,9 +124,45 @@ Events:Subscribe('UI:DrawHud', function()
 		isKilled = false
 	end
 
-	if (isHud and true) then
+	if isHud then
 		WebUI:ExecuteJS('window.showUI();')
 	else
 		WebUI:ExecuteJS('window.hideUI();')
 	end
+end)
+
+function findSkyGradientTexture()
+	-- Find the sky gradient texture of the lowest priority (basic) VE
+	local s_VEPriority = -1
+	local s_VEStates = VisualEnvironmentManager:GetStates()
+	
+	for _, l_VEState in pairs(s_VEStates) do
+		
+		if l_VEState.sky ~= nil then
+			
+			if l_VEState.sky.skyGradientTexture ~= nil then
+
+				if s_VEPriority < 0 or l_VEState.priority < s_VEPriority then
+					s_VEPriority = l_VEState.priority
+
+					m_SkyGradientTexture = l_VEState.sky.skyGradientTexture
+
+					print('Sky gradient found: (VE priority: ' .. s_VEPriority .. ')')
+					print(m_SkyGradientTexture)
+				end
+			end
+		end
+	end
+end
+
+-- Check Message
+Hooks:Install('ClientChatManager:IncomingMessage', 1, function(p_hook, p_Message, p_PlayerId, p_RecipientMask, p_ChannelId, p_IsSenderDead)
+	-- TODO: admins to set specific time
+	--[[
+	if p_Message == "!test" then
+		findSkyGradientTexture()
+	else
+		print("No command detected")
+	end
+	]]
 end)

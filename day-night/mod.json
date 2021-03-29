@@ -1,6 +1,6 @@
 {
     "Name": "DayNight",
-    "Description": "Changes level's lightning during the battle",
+    "Description": "Creates a day-night cycle by changing level's lightning during the battle",
     "Authors": ["DarkThanos", "GreatApo"],
     "Credits": ["Reirei", "IllustrisJack", "Lesley", "kapraran"],
     "Tags": ["day-night"],
@@ -9,6 +9,5 @@
     "HasWebUI": true,
     "Dependencies": {
         "veniceext": "^1.0.0"
-    },
-    "RequiredXPacks": [ 4 ]
+    }
 }
