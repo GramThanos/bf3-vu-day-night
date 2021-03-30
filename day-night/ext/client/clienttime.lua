@@ -155,13 +155,13 @@ function ClientTime:UpdateVE()
                 state.sky.sunSize = 0.01
                 state.sky.sunScale = 3
                 self.changedStandard = true 
-                print('Changed Standard')
+                Tools:DebugPrint('Changed Standard', 'VE')
 
             end
             -- Check if night preset
             if state.priority == 999999 then
 
-                print('999999')
+                --print('999999')
 
                 if m_panoramicXmin ~= nil and self.appliedScaling ~= true then 
                     state.sky.panoramicUVMinX = m_panoramicXmin
