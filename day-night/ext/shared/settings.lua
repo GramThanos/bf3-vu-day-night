@@ -19,7 +19,7 @@ local show_UI_bar = true -- show day-night cycle bar (day-night cycle needs to b
 -- 		1 hour per second (good for debugging) 					: 24/60
 --══════════════════════════════════════════════════════════════════════════════════════════════════════--
 -- FOLLOWING OPTIONS BECOME OBSOLETE IN TICKET MODE ⇊
-local day_night_cycle_duration_in_minutes = 1
+local day_night_cycle_duration_in_minutes = 15
 
 -- Pure night duration in minutes 
 local pure_night_duration = 0.1
@@ -32,7 +32,7 @@ local server_update_daytime = 30
 
 -- The day time to start the server at (0 - 23)
 local start_hour = 0	-- For real time use this value os.time('%H')
-local randomize_start_hour = false
+local randomize_start_hour = true
 local reset_days_hours_for_each_level = true
 --══════════════════════════════════════════════════════════════════════════════════════════════════════--
 
