@@ -20,7 +20,7 @@ Events:Subscribe('Level:Destroy', function()
 	removebNight()
 
     if Settings.day_night_cycle_enabled == true then 
-    ClientTime:OnLevelDestroyed()
+    	ClientTime:OnLevelDestroyed()
     end
 
 end)
