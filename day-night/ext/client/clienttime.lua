@@ -282,7 +282,7 @@ end
 
 function ClientTime:OnLevelDestroyed()
 
-    Events:Unsubscribe('DeltaTime')
+    Events:Unsubscribe('Engine:Update')
 
 end
 

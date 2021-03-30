@@ -15,6 +15,16 @@ Events:Subscribe('Level:Loaded', function()
 	Night()
 end)
 
+Events:Subscribe('Level:Destroy', function()
+
+	removebNight()
+
+    if Settings.day_night_cycle_enabled == true then 
+    ClientTime:OnLevelDestroyed()
+    end
+
+end)
+
 -- Load UI
 Events:Subscribe('Extension:Loaded', function()
 	if Settings.show_UI_bar and Settings.day_night_cycle_enabled then
