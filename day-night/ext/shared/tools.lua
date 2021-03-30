@@ -19,8 +19,8 @@ end
 function Tools:GetFloatDaysHours(seconds)
 	
 	-- Update hours & days
-	local t_days = math.floor(seconds / day_night_cycle_duration_in_seconds)
-    local t_hours = seconds % day_night_cycle_duration_in_seconds / (day_night_cycle_duration_in_seconds / 24)
+	local t_days = math.floor(seconds / Settings.day_night_cycle_duration_in_seconds)
+    local t_hours = seconds % Settings.day_night_cycle_duration_in_seconds / (Settings.day_night_cycle_duration_in_seconds / 24)
 	
 	return t_days, t_hours
 end
@@ -28,9 +28,9 @@ end
 -- Enable/Disable all prints via Settings file
 function Tools:DebugPrint(text, category)
 
-    if Settings.DebugPrints['enable'] == true then
+    if Settings.debugPrints['enable'] == true then
 
-		if Settings.DebugPrints[category] == true then
+		if Settings.debugPrints[category] == true then
 
         	print(tostring(text), 'Category: '.. category)
 
@@ -40,7 +40,7 @@ function Tools:DebugPrint(text, category)
 		
 		end
 
-	elseif Settings.DebugPrints['enable'] == false then
+	elseif Settings.debugPrints['enable'] == false then
         
 		return
 
@@ -51,3 +51,6 @@ function Tools:DebugPrint(text, category)
     end
 
 end
+
+
+return Tools

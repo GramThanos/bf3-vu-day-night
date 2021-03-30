@@ -35,14 +35,14 @@ function ClientTime:Ticks()
     -- Record Ticks
     self.engineUpdateTimer = 0.0 
 
-    Events:Subscribe('DeltaTime', function(dt)
+    Events:Subscribe('Engine:Update', function(dt)
 
         if Settings.use_ticket_based_cycle ~= true then 
 
             self.clientDayLength = self.clientDayLength + dt
             
             -- Offset seconds to 0:00 AM
-            self.seconds = self.clientDayLength % Settings.dayLengthInSeconds 
+            self.seconds = self.clientDayLength % Settings.day_night_cycle_duration_in_seconds
 
             --print(self.seconds)
 
@@ -54,7 +54,7 @@ function ClientTime:Ticks()
             -- Check if it is night
             if self.seconds < Settings.pure_night_duration_sec / 2 then
                 self.factor = 1.0
-            
+
             -- Check if it is night -> day
             elseif self.seconds < Settings.day_night_cycle_duration_in_seconds / 2 - Settings.pure_day_duration_sec / 2 then
                 self.factor = 1.0 - (self.seconds - Settings.pure_night_duration_sec / 2) / (Settings.day_night_cycle_duration_in_seconds / 2 - Settings.pure_day_duration_sec / 2 - Settings.pure_night_duration_sec / 2)
@@ -66,15 +66,22 @@ function ClientTime:Ticks()
             -- Check if it is day -> night
             elseif self.seconds < Settings.day_night_cycle_duration_in_seconds - Settings.pure_night_duration_sec / 2 then
                 self.factor = (self.seconds - Settings.day_night_cycle_duration_in_seconds / 2 - Settings.pure_day_duration_sec / 2) / (Settings.day_night_cycle_duration_in_seconds - Settings.pure_night_duration_sec / 2 - Settings.day_night_cycle_duration_in_seconds / 2 - Settings.pure_day_duration_sec / 2)
-            
+
             -- Check if it is night
             else
                 self.factor = 1.0
             end
             
             -- Update environment lighting
-
             ClientTime:UpdateVE()
+
+            -- Update UI indicators
+            local t_days = nil
+            local t_hours = nil
+            t_days, t_hours = Tools:GetFloatDaysHours(self.clientDayLength)
+            
+            WebUI:ExecuteJS('window.update(' .. tostring(t_days) .. ', ' .. tostring(t_hours) .. ');')
+            t_hours = math.floor(t_hours)
                 
             -- Update hours & days
             
@@ -87,7 +94,7 @@ function ClientTime:Ticks()
 
             end
 
-        elseif Settings.useTicketBasedCycle == true then 
+        elseif Settings.use_ticket_based_cycle == true then 
 
             -- Get Team Tickets
             self.ticketsUS, self.ticketsRU = ClientTime:GetTicketCounterTickets()
@@ -129,28 +136,22 @@ function ClientTime:UpdateVE()
         
     if self.factor ~= self.previousNightFactor then
 
-        if VES == nil then
-            VES = VisualEnvironmentManager:GetStates()
+        if self.states == nil then
+            self.states = VisualEnvironmentManager:GetStates()
         end
         VisualEnvironmentManager:SetDirty(true)
         
         -- Update preset visibility
-        for _, state in pairs(VE) do
+        for _, state in pairs(self.states) do
 
             if state.priority == self.s_VEPriority then 
 
-                state.outdoorLight.sunColor = Vec3(0.905,0.045,0.045)
-                state.outdoorLight.sunRotationX = 180
-                state.outdoorLight.sunRotationY = 180
+                state.outdoorLight.sunColor = Vec3(1,0.3,0.051)
+                state.outdoorLight.sunRotationX = 90
+                state.outdoorLight.sunRotationY = 25
 
-                state.sky.sunSize = 0.1
-                state.sky.sunScale = 2
-                state.sky.panoramicUVMinX = 0.280999988317
-                state.sky.panoramicUVMaxX = 0.298999994993
-                state.sky.panoramicUVMinY = 0.0630000010133
-                state.sky.panoramicUVMaxY = 0.307000011206
-                state.sky.panoramicTileFactor = 1.0
-                state.sky.panoramicRotation = 260
+                state.sky.sunSize = 0.01
+                state.sky.sunScale = 3
 
             end
             -- Check if night preset
@@ -158,12 +159,14 @@ function ClientTime:UpdateVE()
 
                 state.visibility = self.factor * Settings.night_darkness
 
+                print('Changing Night VE')
+
             end
 
         end
 
 
-        Tool:DebugPrint('Changing VE: ' .. self.factor)
+        Tools:DebugPrint('Changing VE: ' .. self.factor, 'VE')
         
         self.previousNightFactor = self.factor
     end			
@@ -177,7 +180,7 @@ function ClientTime:Sync()
         self.clientDayLength = serverTime
         
         -- Update hours and days from server
-        days, hours = Tools:getDaysHours(serverTime)
+        days, hours = Tools:GetDaysHours(serverTime)
 
         -- Print Debug info
         Tools:DebugPrint('Server Datetime Sync : ' .. tostring(days) .. ' days ' .. tostring(hours) .. ' hours', 'time')
@@ -262,6 +265,12 @@ function ClientTime:FindSkyGradientTexture()
 					self.s_VEPriority = l_VEState.priority
 
 					m_SkyGradientTexture = l_VEState.sky.skyGradientTexture
+                    m_panoramicXmin = l_VEState.sky.panoramicUVMinX
+                    m_panoramicXmax = l_VEState.sky.panoramicUVMaxX 
+                    m_panoramicYmin = l_VEState.sky.panoramicUVMinY
+                    m_panoramicYmax = l_VEState.sky.panoramicUVMaxY
+                    m_panoramicTileFactor = l_VEState.sky.panoramicTileFactor
+                    m_panoramicRotation = l_VEState.sky.panoramicRotation
 
 					print('Sky gradient found: (VE priority: ' .. self.s_VEPriority .. ')')
 					print(m_SkyGradientTexture)
@@ -276,3 +285,5 @@ function ClientTime:OnLevelDestroyed()
     Events:Unsubscribe('DeltaTime')
 
 end
+
+return ClientTime

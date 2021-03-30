@@ -5,8 +5,6 @@ require('ui')
 require('night_preset')
 
 
-local client_day_night_cycle_seconds = 0
-
 -- Level was loaded
 Events:Subscribe('Level:Loaded', function()
 	-- Initiate Client Time
@@ -19,7 +17,7 @@ end)
 
 -- Load UI
 Events:Subscribe('Extension:Loaded', function()
-	if show_UI_bar and day_night_cycle_enabled then
+	if Settings.show_UI_bar and Settings.day_night_cycle_enabled then
 		WebUI:Init()
 		WebUI:ExecuteJS('window.settings({days: ' .. tostring(show_days) .. ', period: ' .. tostring(show_day_period) .. ');')
 	end

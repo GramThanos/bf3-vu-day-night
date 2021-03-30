@@ -51,19 +51,23 @@ function Time:Ticks()
             self.serverDayLength = self.serverDayLength + dt
             
             -- Print Debug info
-            if Settings.DebugPrints['enable'] == true then
+            if Settings.debugPrints['enable'] == true then
 
-                if Settings.DebugPrints['time'] == true then
+                if Settings.debugPrints['time'] == true then
 
                 -- Update hours & days-- Update hours & days
                 self.days = nil
                 self.hours = nil
-                self.days, self.hours = Tool:getDaysHours(self.serverDayLength)
+                self.days, self.hours = Tools:GetDaysHours(self.serverDayLength)
+
+                    if self.days == nil or self.hours == nil then 
+                        return 
+                    end
                     
                     if hours ~= self.hours or days ~= self.days then
                         days = self.days
                         hours = self.hours
-                        Tool:DebugPrint('Current Time | Day: ' ..tostring(days) .. 'Hour: '.. tostring(hours), 'time')
+                        Tools:DebugPrint('Current Time | Day: ' ..tostring(days) .. 'Hour: '.. tostring(hours), 'time')
                     end
 
                 end
@@ -71,7 +75,7 @@ function Time:Ticks()
             end
             
             -- Check if it is time to send a client update (to ensure client sync)
-            if self.engineUpdateTimer < Settings.serverUpdatesFrequency then
+            if self.engineUpdateTimer < Settings.server_update_daytime then
                 return
             end
             self.engineUpdateTimer = 0.0

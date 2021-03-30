@@ -1,5 +1,6 @@
 local nightPreset = nil
 local Tools = require('__shared/tools')
+local Settings = require('__shared/settings')
 
 -- Based on Code by Orfeas Zafeiris
 -- expanded by IllustrisJack
@@ -8,7 +9,7 @@ function Night()
 	
 	local nightData = VisualEnvironmentEntityData()
 	nightData.enabled = true
-	nightData.visibility = night_darkness
+	nightData.visibility = Settings.night_darkness
 	nightData.priority = 999999
 
 	local outdoorLight = OutdoorLightComponentData()
