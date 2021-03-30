@@ -1,4 +1,5 @@
 local nightPreset = nil
+local Tools = require('__shared/tools')
 
 -- Based on Code by Orfeas Zafeiris
 -- expanded by IllustrisJack
@@ -53,7 +54,7 @@ function Night()
 
 	if m_SkyGradientTexture ~= nil then
 		sky.skyGradientTexture = TextureAsset(m_SkyGradientTexture) --TextureAsset(_G.MoonNightGradient)
-		print("Sky Gradient Texture applied")
+		Tools:DebugPrint("Sky Gradient Texture applied", 'VE')
 	end
 	sky.realm = 2
 	sky.panoramicUVMinX = 0.281
@@ -160,7 +161,7 @@ function Night()
 
 	if nightPreset ~= nil then
 		nightPreset:Init(Realm.Realm_Client, true)
-		print('Night VE preset added')
+		Tools:DebugPrint('Night VE preset added', 'VE')
 	end
 	
 end
@@ -171,75 +172,11 @@ function removebNight()
 		nightPreset:Destroy()
 		nightPreset = nil
 
-		print('Night VE preset removed')
+		Tools:DebugPrint('Night VE preset removed', 'VE')
 	end
 
 	if m_SkyGradientTexture ~= nil then
 		m_SkyGradientTexture = nil
-	end
-end
-
--- Change visibility
-local previous_night_factor = nil
-function update_night_visibility(factor)
-    -- local factor = math.abs(hours % 24 - 12)/12
-	
-	if nightPreset == nil then
-		return
-	end
-	
-	-- Try to update VE only if the factor is different 
-	if (factor ~= previous_night_factor) then
-		
-		local states = VisualEnvironmentManager:GetStates()
-		
-		-- Update preset visibility
-		for _, state in pairs(states) do
-				
-			-- Check if night preset
-			if state.priority == 999999 then
-				state.visibility = factor * night_darkness
-				VisualEnvironmentManager:SetDirty(true)
-				--print('Preset found & visibility was change')
-			end
-		end
-		
-		previous_night_factor = factor
-	end			
-end
-
--- Hide Sun
-function applyPatches()
-
-	local states = VisualEnvironmentManager:GetStates()
-	
-	for _, state in pairs(states) do
-		
-		if hide_sun then
-			if state.sky ~= nil then
-				state.sky.sunScale = 0
-				state.sky.sunSize = 0
-				print('Sun off')
-			end
-			
-			if state.sunFlare ~= nil then
-				state.sunFlare.enable = false
-				print('Sunflares off')
-			end
-		end
-
-		if day_night_cycle_enabled then
-			if state.sky ~= nil then
-				state.sky.panoramicUVMinX = 0.280999988317
-				state.sky.panoramicUVMaxX = 0.298999994993
-				state.sky.panoramicUVMinY = 0.0630000010133
-				state.sky.panoramicUVMaxY = 0.307000011206
-				state.sky.panoramicTileFactor = 1.0
-				state.sky.panoramicRotation = 260
-				print('Sky scale patch applied')
-			end
-		end
-
 	end
 end
 
