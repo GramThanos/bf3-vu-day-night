@@ -9,7 +9,7 @@ function Night()
 	
 	local nightData = VisualEnvironmentEntityData()
 	nightData.enabled = true
-	nightData.visibility = Settings.night_darkness
+	nightData.visibility = 1
 	nightData.priority = 999999
 
 	local outdoorLight = OutdoorLightComponentData()
@@ -27,7 +27,7 @@ function Night()
 	outdoorLight.cloudShadowSpeed = Vec2(-15.000000, -15.000000)
 
 	outdoorLight.skyLightAngleFactor = 0.009
-	outdoorLight.sunSpecularScale = 0.25
+	outdoorLight.sunSpecularScale = 0.0
 	outdoorLight.skyEnvmapShadowScale = 0.5
 	outdoorLight.sunShadowHeightScale = 0.3
 
@@ -36,18 +36,18 @@ function Night()
 	outdoorLight.translucencyScale = 1
 	outdoorLight.translucencyPower = 80.0
 
-	outdoorLight.sunRotationX = 255
-	outdoorLight.sunRotationY = 25
+	outdoorLight.sunRotationX = 0
+	outdoorLight.sunRotationY = 0
 
 	local sky = SkyComponentData()
 	sky.brightnessScale = 0.01
 	sky.enable = true
-	if hide_sun then
+	if Settings.hide_sun then
 		sky.sunSize = 0.0
 		sky.sunScale = 0.0
 	else
-		sky.sunSize = 0.013
-		sky.sunScale = 0.6
+		sky.sunSize = 0.01
+		sky.sunScale = 3
 	end
 	sky.panoramicTexture = nil -- TextureAsset(_G.MoonNightSkybox)
 	sky.panoramicAlphaTexture = nil -- extureAsset(_G.MoonNightAlpha)

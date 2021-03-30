@@ -7,29 +7,33 @@ require('night_preset')
 
 -- Level was loaded
 Events:Subscribe('Level:Loaded', function()
+
 	-- Initiate Client Time
     if Settings.day_night_cycle_enabled == true then 
         ClientTime:__Init()
     end
 	-- Create Night preset
 	Night()
+
 end)
 
 Events:Subscribe('Level:Destroy', function()
 
 	removebNight()
 
-    if Settings.day_night_cycle_enabled == true then 
+	if Settings.day_night_cycle_enabled == true then 
     	ClientTime:OnLevelDestroyed()
     end
+
+	WebUI:ExecuteJS('window.hideUI();')
 
 end)
 
 -- Load UI
 Events:Subscribe('Extension:Loaded', function()
-	if Settings.show_UI_bar and Settings.day_night_cycle_enabled then
+	if Settings.show_UI_bar and Settings.day_night_cycle_enabled and Settings.use_ticket_based_cycle ~= true then
 		WebUI:Init()
-		WebUI:ExecuteJS('window.settings({days: ' .. tostring(show_days) .. ', period: ' .. tostring(show_day_period) .. ');')
+		WebUI:ExecuteJS('window.settings({days: ' .. tostring(Settings.show_days) .. ', period: ' .. tostring(Settings.show_day_period) .. ');')
 	end
 end)
 
@@ -37,22 +41,26 @@ end)
 -- WebUI:ExecuteJS('window.showUI();')
 -- WebUI:ExecuteJS('window.hideUI());')
 Events:Subscribe('UI:DrawHud', function()
-	-- Get player
-	local s_player = PlayerManager:GetLocalPlayer()
-	if s_player == nil or s_player.soldier == nil then
-		if isKilled then
-			WebUI:ExecuteJS('window.hideUI();')
-			return
+
+	if Settings.show_UI_bar == true and Settings.use_ticket_based_cycle ~= true then 
+		-- Get player
+		local s_player = PlayerManager:GetLocalPlayer()
+		if s_player == nil or s_player.soldier == nil then
+			if isKilled then
+				WebUI:ExecuteJS('window.hideUI();')
+				return
+			end
+		else
+			isKilled = false
 		end
-	else
-		isKilled = false
+
+		if isHud then
+			WebUI:ExecuteJS('window.showUI();')
+		else
+			WebUI:ExecuteJS('window.hideUI();')
+		end
 	end
 
-	if isHud then
-		WebUI:ExecuteJS('window.showUI();')
-	else
-		WebUI:ExecuteJS('window.hideUI();')
-	end
 end)
 
 -- Check Message

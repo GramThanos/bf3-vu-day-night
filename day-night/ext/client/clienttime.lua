@@ -6,7 +6,6 @@ require('ui')
 function ClientTime:__Init()
 
     self.factor = 1
-    self.clientDayLength = 0
     self.previousNightFactor = nil
     self.t = 0
     -- Get Visual Environments
@@ -26,14 +25,14 @@ end
 
 function ClientTime:GetVE()
 
-    VES = VisualEnvironmentManager:GetStates()
+    self.VES = VisualEnvironmentManager:GetStates()
 
 end
 
 function ClientTime:Ticks()
 
     -- Record Ticks
-    self.engineUpdateTimer = 0.0 
+    self.clientDayLength = 0.0 
 
     Events:Subscribe('Engine:Update', function(dt)
 
@@ -76,12 +75,12 @@ function ClientTime:Ticks()
             ClientTime:UpdateVE()
 
             -- Update UI indicators
-            local t_days = nil
-            local t_hours = nil
-            t_days, t_hours = Tools:GetFloatDaysHours(self.clientDayLength)
+            self.days = nil
+            self.hours = nil
+            self.days, self.hours = Tools:GetFloatDaysHours(self.clientDayLength)
             
-            WebUI:ExecuteJS('window.update(' .. tostring(t_days) .. ', ' .. tostring(t_hours) .. ');')
-            t_hours = math.floor(t_hours)
+            WebUI:ExecuteJS('window.update(' .. tostring(self.days) .. ', ' .. tostring(self.hours) .. ');')
+            t_hours = math.floor(self.hours)
                 
             -- Update hours & days
             
@@ -159,6 +158,15 @@ function ClientTime:UpdateVE()
 
                 state.visibility = self.factor * Settings.night_darkness
 
+                if m_panoramicXmin ~= nil then 
+                    state.sky.panoramicUVMinX = m_panoramicXmin
+                    state.sky.panoramicUVMaxX = m_panoramicXmax
+                    state.sky.panoramicUVMinY = m_panoramicYmin
+                    state.sky.panoramicUVMaxY = m_panoramicYmax
+                    state.sky.panoramicTileFactor = m_panoramicTileFactor
+                    state.sky.panoramicRotation = m_panoramicRotation
+                end
+
                 print('Changing Night VE')
 
             end
@@ -213,13 +221,13 @@ end
 -- Hide Sun
 function ClientTime:ApplyPatches()
 
-    if VES == nil then
-        VES = VisualEnvironmentManager:GetStates()
+    if self.VES == nil then
+        self.VES = VisualEnvironmentManager:GetStates()
     end
 
-	for _, state in pairs(VES) do
+	for _, state in pairs(self.VES) do
 		
-		if hide_sun then
+		if Settings.hide_sun then
 			if state.sky ~= nil then
 				state.sky.sunScale = 0
 				state.sky.sunSize = 0
@@ -232,18 +240,6 @@ function ClientTime:ApplyPatches()
 			end
 		end
 
-		if day_night_cycle_enabled then
-			if state.sky ~= nil then
-				state.sky.panoramicUVMinX = 0.280999988317
-				state.sky.panoramicUVMaxX = 0.298999994993
-				state.sky.panoramicUVMinY = 0.0630000010133
-				state.sky.panoramicUVMaxY = 0.307000011206
-				state.sky.panoramicTileFactor = 1.0
-				state.sky.panoramicRotation = 260
-				print('Sky scale patch applied')
-			end
-		end
-
 	end
 end
 
@@ -251,11 +247,11 @@ function ClientTime:FindSkyGradientTexture()
 	-- Find the sky gradient texture of the lowest priority (basic) VE
 	self.s_VEPriority = -1
 	
-    if VES == nil then
-        VES = VisualEnvironmentManager:GetStates()
+    if self.VES == nil then
+        self.VES = VisualEnvironmentManager:GetStates()
     end
 	
-	for _, l_VEState in pairs(VES) do
+	for _, l_VEState in pairs(self.VES) do
 		
 		if l_VEState.sky ~= nil then
 			
@@ -271,9 +267,11 @@ function ClientTime:FindSkyGradientTexture()
                     m_panoramicYmax = l_VEState.sky.panoramicUVMaxY
                     m_panoramicTileFactor = l_VEState.sky.panoramicTileFactor
                     m_panoramicRotation = l_VEState.sky.panoramicRotation
+                    print('Saved Panoramic Factors')
 
 					print('Sky gradient found: (VE priority: ' .. self.s_VEPriority .. ')')
 					print(m_SkyGradientTexture)
+
 				end
 			end
 		end
@@ -283,6 +281,7 @@ end
 function ClientTime:OnLevelDestroyed()
 
     Events:Unsubscribe('Engine:Update')
+    Events:Unsubscribe(NetMessage.S2C_SYNC_DAYTIME)
 
 end
 
