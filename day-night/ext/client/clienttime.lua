@@ -3,8 +3,11 @@ local NetMessage = require('__shared/net')
 local Settings = require('__shared/settings')
 require('ui')
 
+
 function ClientTime:__Init()
 
+    self.changedStandard = nil
+    self.appliedScaling = nil
     self.factor = 1
     self.previousNightFactor = nil
     self.t = 0
@@ -135,15 +138,15 @@ function ClientTime:UpdateVE()
         
     if self.factor ~= self.previousNightFactor then
 
-        if self.states == nil then
-            self.states = VisualEnvironmentManager:GetStates()
-        end
+        -- Get New States with Night Preset
+        self.VES = VisualEnvironmentManager:GetStates()
+
         VisualEnvironmentManager:SetDirty(true)
         
         -- Update preset visibility
-        for _, state in pairs(self.states) do
+        for _, state in pairs(self.VES) do
 
-            if state.priority == self.s_VEPriority then 
+            if state.priority == self.s_VEPriority and self.changedStandard ~= true then 
 
                 state.outdoorLight.sunColor = Vec3(1,0.3,0.051)
                 state.outdoorLight.sunRotationX = 90
@@ -151,31 +154,34 @@ function ClientTime:UpdateVE()
 
                 state.sky.sunSize = 0.01
                 state.sky.sunScale = 3
+                self.changedStandard = true 
+                Tools:DebugPrint('Changed Standard', 'VE')
 
             end
             -- Check if night preset
             if state.priority == 999999 then
 
-                state.visibility = self.factor * Settings.night_darkness
+                --print('999999')
 
-                if m_panoramicXmin ~= nil then 
+                if m_panoramicXmin ~= nil and self.appliedScaling ~= true then 
                     state.sky.panoramicUVMinX = m_panoramicXmin
                     state.sky.panoramicUVMaxX = m_panoramicXmax
                     state.sky.panoramicUVMinY = m_panoramicYmin
                     state.sky.panoramicUVMaxY = m_panoramicYmax
                     state.sky.panoramicTileFactor = m_panoramicTileFactor
                     state.sky.panoramicRotation = m_panoramicRotation
+                    self.appliedScaling = true
                 end
 
-                print('Changing Night VE')
+                state.visibility = self.factor * Settings.night_darkness
+
+                Tools:DebugPrint('Changing VE: ' .. state.visibility, 'VE')
 
             end
 
         end
 
 
-        Tools:DebugPrint('Changing VE: ' .. self.factor, 'VE')
-        
         self.previousNightFactor = self.factor
     end			
 end
@@ -273,9 +279,13 @@ function ClientTime:FindSkyGradientTexture()
 					print(m_SkyGradientTexture)
 
 				end
+
 			end
+
 		end
+
 	end
+
 end
 
 function ClientTime:OnLevelDestroyed()

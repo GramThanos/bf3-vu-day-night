@@ -15,8 +15,14 @@ Events:Subscribe('Level:Loaded', function(levelName, gameMode, round, roundsPerM
 
 end)
 
-function Time:__Init()
+Events:Subscribe('Level:Destroy', function()
 
+    Events:Unsubscribe('Engine:Update')
+
+end)
+
+
+function Time:__Init()
 
     self.serverDayLength = 0.0 
     self.engineUpdateTimer = 0.0
